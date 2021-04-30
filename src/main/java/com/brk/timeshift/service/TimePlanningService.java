@@ -5,7 +5,9 @@ import com.brk.timeshift.model.DailyTimeTable.TimeSlot;
 import com.brk.timeshift.model.TimeTable;
 import com.brk.timeshift.model.WorkerId;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,24 @@ public class TimePlanningService {
       }
     }
     dailyAssignments.get(timeSlot).add(worker);
+  }
+
+  public Map<String, TimeSlot> getWorkerSchedule(WorkerId workerId) {
+    Map<String, TimeSlot> schedule = new HashMap<>();
+
+    // iterate over time table and build schedule for one worker
+    for (Entry<String, DailyTimeTable> timeTableEntry : getTimeTable().getTimeTable()
+        .entrySet()) {
+      for (Entry<TimeSlot, Collection<WorkerId>> assignment : timeTableEntry.getValue()
+          .getAssignments().entrySet()) {
+        if (assignment.getValue().contains(workerId)) {
+          schedule.put(timeTableEntry.getKey(), assignment.getKey());
+          break;
+        }
+      }
+    }
+    return schedule;
+
   }
 
 }

@@ -75,6 +75,23 @@ class TimeshiftApplicationTests {
 	}
 
 	@Test
+	void workerScheduleCanBeLoaded() {
+		timePlanningService
+				.addWorker("2020-04-29", TimeSlot.TIME_0_8, WorkerId.builder().id("VladimirV").build());
+
+		timePlanningService
+				.addWorker("2020-04-28", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
+
+		Map<String, TimeSlot> schedule = timePlanningService
+				.getWorkerSchedule(WorkerId.builder().id("VladimirV").build());
+
+		assertNotNull(schedule);
+		assertEquals(1, schedule.size());
+		assertTrue(schedule.containsKey("2020-04-29"));
+		assertEquals(TimeSlot.TIME_0_8, schedule.get("2020-04-29"));
+	}
+
+	@Test
 	void workersAddingShouldFailWhenAddingOnSameDay() {
 		timePlanningService.addWorker("1", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
 
