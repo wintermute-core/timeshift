@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TimeshiftApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(TimeshiftApplication.class, args);
-	}
+  public static void main(String[] args) {
+    SpringApplication.run(TimeshiftApplication.class, args);
+  }
 
 }
