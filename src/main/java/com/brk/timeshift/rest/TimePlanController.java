@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/v1/timeplan")
 @AllArgsConstructor
-public class TimePlan {
+public class TimePlanController {
 
   private final TimePlanningService timePlanningService;
 
