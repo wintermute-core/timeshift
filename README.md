@@ -10,6 +10,14 @@ Business requirements:
 * It is a 24 hour timetable 0-8, 8-16, 16-24
 * Preferably write a couple of units tests
 
+# Implementation approach
+
+* Each worker referenced by string, "WorkerID"
+* Each day is represented by string
+* Workers can be assigned to working slots 0-8, 8-16, 16-24
+* Time table is saved in memory
+* Interaction is done through RestAPI, swagger interface also available
+
 # Workflows
 
 Start application:
