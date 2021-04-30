@@ -1,8 +1,10 @@
 package com.brk.timeshift;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.brk.timeshift.model.DailyTimeTable;
 import com.brk.timeshift.model.DailyTimeTable.TimeSlot;
@@ -11,7 +13,7 @@ import com.brk.timeshift.service.TimePlanningException;
 import com.brk.timeshift.service.TimePlanningService;
 import java.util.Collection;
 import java.util.Map;
-import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -24,6 +26,11 @@ class TimeshiftApplicationTests {
 
 	@Test
 	void contextLoads() {
+	}
+
+	@BeforeEach
+	void initPlanningService() {
+		timePlanningService.getTimeTable().getTimeTable().clear();
 	}
 
 	@Test
@@ -91,6 +98,25 @@ class TimeshiftApplicationTests {
 		assertEquals(TimeSlot.TIME_0_8, schedule.get("2020-04-29"));
 	}
 
+
+	@Test
+	void workersAddRemoval() {
+		assertFalse(timePlanningService
+				.getWorkerSchedule(WorkerId.builder().id("VladimirV").build()).containsKey("2020-04-29"));
+
+		timePlanningService
+				.addWorker("2020-04-29", TimeSlot.TIME_0_8, WorkerId.builder().id("VladimirV").build());
+
+		assertTrue(timePlanningService
+				.getWorkerSchedule(WorkerId.builder().id("VladimirV").build()).containsKey("2020-04-29"));
+
+		timePlanningService
+				.removeWorker("2020-04-29", TimeSlot.TIME_0_8, WorkerId.builder().id("VladimirV").build());
+
+		assertFalse(timePlanningService
+				.getWorkerSchedule(WorkerId.builder().id("VladimirV").build()).containsKey("2020-04-29"));
+	}
+
 	@Test
 	void workersAddingShouldFailWhenAddingOnSameDay() {
 		timePlanningService.addWorker("1", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
@@ -101,8 +127,7 @@ class TimeshiftApplicationTests {
 		} catch (TimePlanningException e) {
 			return;
 		}
-
-		Assertions.fail("Adding of workers on the same day should fail");
+		fail("Adding of workers on the same day should fail");
 	}
 
 }

@@ -41,6 +41,17 @@ public class TimePlanningService {
     dailyAssignments.get(timeSlot).add(worker);
   }
 
+  public void removeWorker(String day, TimeSlot timeSlot, WorkerId workerId) {
+    if (!timeTable.getTimeTable().containsKey(day)) {
+      log.warn("No day to remove " + day);
+      return;
+    }
+
+    Map<TimeSlot, Collection<WorkerId>> dailyAssignments = timeTable.getTimeTable().get(day)
+        .getAssignments();
+    dailyAssignments.get(timeSlot).remove(workerId);
+  }
+
   public Map<String, TimeSlot> getWorkerSchedule(WorkerId workerId) {
     Map<String, TimeSlot> schedule = new HashMap<>();
 
