@@ -1,9 +1,16 @@
 package com.brk.timeshift;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import com.brk.timeshift.model.DailyTimeTable;
 import com.brk.timeshift.model.DailyTimeTable.TimeSlot;
 import com.brk.timeshift.model.WorkerId;
 import com.brk.timeshift.service.TimePlanningException;
 import com.brk.timeshift.service.TimePlanningService;
+import java.util.Collection;
+import java.util.Map;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +28,50 @@ class TimeshiftApplicationTests {
 
 	@Test
 	void workersAdding() {
-		timePlanningService.addWorker("1", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
+		timePlanningService
+				.addWorker("2020-04-29", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
+		timePlanningService
+				.addWorker("2020-04-30", TimeSlot.TIME_8_16, WorkerId.builder().id("VladimirV").build());
+
+		Map<String, DailyTimeTable> timeTable = timePlanningService.getTimeTable().getTimeTable();
+		assertNotNull(timeTable);
+		assertEquals(2, timeTable.size());
+		assertTrue(timeTable.containsKey("2020-04-29"));
+		assertTrue(timeTable.containsKey("2020-04-30"));
+		DailyTimeTable dailyTimeTable = timeTable.get("2020-04-29");
+		assertNotNull(dailyTimeTable);
+		Map<TimeSlot, Collection<WorkerId>> assignments = dailyTimeTable.getAssignments();
+		assertNotNull(assignments);
+		assertTrue(assignments.containsKey(TimeSlot.TIME_0_8));
+		assertTrue(
+				assignments.get(TimeSlot.TIME_0_8).contains(WorkerId.builder().id("DonaldT").build()));
+
+		assertTrue(
+				timeTable.get("2020-04-30").getAssignments().get(TimeSlot.TIME_8_16)
+						.contains(WorkerId.builder().id("VladimirV").build()));
+	}
+
+	@Test
+	void sameWorkerCanBeAddedToDifferentDays() {
+		timePlanningService
+				.addWorker("2020-04-29", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
+		timePlanningService
+				.addWorker("2020-04-30", TimeSlot.TIME_0_8, WorkerId.builder().id("DonaldT").build());
+		timePlanningService
+				.addWorker("2020-05-01", TimeSlot.TIME_8_16, WorkerId.builder().id("DonaldT").build());
+
+		Map<String, DailyTimeTable> timeTable = timePlanningService.getTimeTable().getTimeTable();
+		assertNotNull(timeTable);
+
+		assertTrue(
+				timeTable.get("2020-04-29").getAssignments().get(TimeSlot.TIME_0_8)
+						.contains(WorkerId.builder().id("DonaldT").build()));
+		assertTrue(
+				timeTable.get("2020-04-30").getAssignments().get(TimeSlot.TIME_0_8)
+						.contains(WorkerId.builder().id("DonaldT").build()));
+		assertTrue(
+				timeTable.get("2020-05-01").getAssignments().get(TimeSlot.TIME_8_16)
+						.contains(WorkerId.builder().id("DonaldT").build()));
 	}
 
 	@Test
