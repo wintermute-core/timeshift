@@ -19,6 +19,9 @@ repositories {
 }
 
 dependencies {
+
+	compile 'org.springdoc:springdoc-openapi-ui:1.5.2'
+
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
