@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import com.brk.timeshift.model.DailyTimeTable;
 import com.brk.timeshift.model.DailyTimeTable.TimeSlot;
@@ -16,9 +17,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @SpringBootTest
-class TimePlanApiTest {
+class TimePlanControllerTest {
 
   @Autowired
   TimePlanController timePlanController;
@@ -60,5 +63,16 @@ class TimePlanApiTest {
     assertTrue(schedule3.isEmpty());
   }
 
+  @Test
+  void addWorkerSameTimeSchedule() {
+    timePlanController.addWorker("2021-05-01", TimeSlot.TIME_8_16, "VladimirV");
+    try {
+      timePlanController.addWorker("2021-05-01", TimeSlot.TIME_0_8, "VladimirV");
+    } catch (ResponseStatusException e) {
+      assertEquals(HttpStatus.BAD_REQUEST, e.getStatus());
+      return;
+    }
+    fail("Adding of worker to same day should fail");
+  }
 
 }

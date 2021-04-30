@@ -17,6 +17,7 @@ Business requirements:
 * Workers can be assigned to working slots 0-8, 8-16, 16-24
 * Time table is saved in memory
 * Interaction is done through RestAPI, swagger interface also available
+* If will appear conflicts in scheduling, bad request response will be returned
 
 # Workflows
 
