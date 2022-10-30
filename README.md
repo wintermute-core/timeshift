@@ -87,3 +87,9 @@ curl -X GET "http://localhost:8080/api/v1/timeplan" -H  "accept: */*"
 * Spring Boot
 * Swagger
 
+
+
+## License
+
+MIT
+
